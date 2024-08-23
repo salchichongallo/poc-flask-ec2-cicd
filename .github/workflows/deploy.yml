@@ -13,19 +13,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: copy file via ssh password
+      - name: Upload to temp dir
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
           source: ./*
-          target: ${{ vars.APP_DIR }}
+          target: "/tmp/${{ vars.APP_NAME }}"
 
-      - name: Deploy to server
+      - name: Prepare artifact
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
-          script: whoami
+          script: |
+            sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
+            sudo /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
