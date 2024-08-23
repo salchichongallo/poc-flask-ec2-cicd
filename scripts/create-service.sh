@@ -9,7 +9,7 @@ service_file="/etc/systemd/system/$app.service"
 
 current_user=$(whoami)
 
-sudo cat <<EOF > $service_file
+sudo cat <<EOF | sudo tee $service_file
 [Unit]
 Description=$app App
 After=network.target
