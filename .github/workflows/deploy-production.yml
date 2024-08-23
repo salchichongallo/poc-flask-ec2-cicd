@@ -1,0 +1,48 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload to temp dir
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.KEY }}
+          username: ${{ secrets.USERNAME }}
+          source: ./*
+          target: "/tmp/${{ vars.APP_NAME }}"
+
+      - name: Prepare Artifact and Restart Server
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          APP_NAME: ${{ vars.APP_NAME }}
+          APP_PORT: ${{ vars.APP_PORT }}
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.KEY }}
+          username: ${{ secrets.USERNAME }}
+          script_stop: true
+          envs: APP_NAME,APP_PORT
+          script: |
+            sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
+            APP_NAME=$APP_NAME /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
+            sudo rm -rf /var/www/${{ vars.APP_NAME }}
+            sudo mv /tmp/${{ vars.APP_NAME }} /var/www/
+            python3 -m venv /var/www/${{ vars.APP_NAME }}/venv
+            source /var/www/${{ vars.APP_NAME }}/venv/bin/activate
+            pip install -r /var/www/${{ vars.APP_NAME }}/requirements.txt
+            sudo chmod +x /var/www/${{ vars.APP_NAME }}/scripts/create-service.sh
+            APP_NAME=$APP_NAME APP_PORT=$APP_PORT /var/www/${{ vars.APP_NAME }}/scripts/create-service.sh
+            sudo systemctl enable ${{ vars.APP_NAME }}
+            sudo systemctl daemon-reload
+            sudo systemctl start ${{ vars.APP_NAME }}
