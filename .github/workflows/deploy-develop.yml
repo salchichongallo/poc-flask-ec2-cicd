@@ -2,7 +2,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
           source: ./*
           target: "/tmp/${{ vars.APP_NAME }}"
 
-      - name: Prepare artifact
+      - name: Prepare Artifact and Restart Server
         uses: appleboy/ssh-action@v1.0.3
         env:
           APP_NAME: ${{ vars.APP_NAME }}
