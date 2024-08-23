@@ -5,9 +5,9 @@ port="$APP_PORT"
 
 app_dir="/var/www/$app"
 
-$service_file="/etc/systemd/system/$app.service"
+service_file="/etc/systemd/system/$app.service"
 
-$current_user=$(whoami)
+current_user=$(whoami)
 
 sudo cat <<EOF > $service_file
 [Unit]

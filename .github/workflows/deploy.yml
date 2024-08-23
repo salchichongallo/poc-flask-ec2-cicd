@@ -31,6 +31,7 @@ jobs:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
+          script_stop: true
           envs: APP_NAME,APP_PORT
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
