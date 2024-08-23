@@ -26,11 +26,12 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           APP_NAME: ${{ vars.APP_NAME }}
+          FOO: "bar"
         with:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
-          envs: APP_NAME
+          envs: APP_NAME,FOO
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
             sudo /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
