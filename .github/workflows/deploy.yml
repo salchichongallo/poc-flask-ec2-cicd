@@ -34,3 +34,7 @@ jobs:
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
             APP_NAME=$APP_NAME /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
+            sudo mv /tmp/${{ vars.APP_NAME }} /var/www/${{ vars.APP_NAME }}
+            python3 -m venv /var/www/${{ vars.APP_NAME }}/venv
+            source /var/www/${{ vars.APP_NAME }}/venv/bin/activate
+            pip install -r /var/www/${{ vars.APP_NAME }}/requirements.txt
