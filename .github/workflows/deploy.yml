@@ -24,10 +24,13 @@ jobs:
 
       - name: Prepare artifact
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          APP_NAME: ${{ vars.APP_NAME }}
         with:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
+          envs: APP_NAME
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
             sudo /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
