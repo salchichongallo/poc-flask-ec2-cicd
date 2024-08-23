@@ -33,4 +33,4 @@ jobs:
           envs: APP_NAME
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
-            sudo APP_NAME=$APP_NAME /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
+            APP_NAME=$APP_NAME /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
