@@ -26,11 +26,12 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           APP_NAME: ${{ vars.APP_NAME }}
+          APP_PORT: ${{ vars.APP_PORT }}
         with:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USERNAME }}
-          envs: APP_NAME
+          envs: APP_NAME,APP_PORT
           script: |
             sudo chmod +x /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
             APP_NAME=$APP_NAME /tmp/${{ vars.APP_NAME }}/scripts/prepare.sh
@@ -39,3 +40,8 @@ jobs:
             python3 -m venv /var/www/${{ vars.APP_NAME }}/venv
             source /var/www/${{ vars.APP_NAME }}/venv/bin/activate
             pip install -r /var/www/${{ vars.APP_NAME }}/requirements.txt
+            sudo chmod +x /var/www/${{ vars.APP_NAME }}/scripts/create-service.sh
+            APP_NAME=$APP_NAME APP_PORT=$APP_PORT /var/www/${{ vars.APP_NAME }}/scripts/create-service.sh
+            sudo systemctl enable ${{ vars.APP_NAME }}
+            sudo systemctl daemon-reload
+            sudo systemctl start ${{ vars.APP_NAME }}
